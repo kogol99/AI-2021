@@ -15,7 +15,9 @@ class PCB:
             self.path_list.append(Path(point[0], point[1]))
 
     def create_random_solution(self):
+        index = -1
         for my_path in self.path_list:
+            index += 1
             while my_path.actual_point != my_path.end_point:
                 available_traffic_direction = []
                 for chosen_direction in Direction:
@@ -32,3 +34,4 @@ class PCB:
                         if (my_path.actual_point[0] - self.width + 1) * -1 > 0:
                             available_traffic_direction.append(chosen_direction)
                 my_path.add_random_segment_to_path(available_traffic_direction)
+            print(self.path_list[index].length)

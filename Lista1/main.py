@@ -1,8 +1,9 @@
 from PCB import PCB
-
+from readFile import ReadFile
 
 if __name__ == '__main__':
-    new = PCB([[[0, 0], [2, 2]]], 3, 3)
-    new.assign_points()
-    new.create_random_solution()
-    print(new)
+    reader = ReadFile("TestData\zad3.txt")
+    width, height, points_list = reader.get_data()
+    test = PCB(points_list, width, height)
+    test.assign_points()
+    test.create_random_solution()

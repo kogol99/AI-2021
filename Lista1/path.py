@@ -8,6 +8,7 @@ class Path:
         self.end_point = end_point
         self.actual_point = self.start_point
         self.segment_list = []
+        self.length = 0
 
     def add_random_segment_to_path(self, available_direction):
         self.add_step(choice(available_direction))
@@ -24,7 +25,7 @@ class Path:
         else:
             self.segment_list.append(Segment(1, direction))
             self.add_traffic_to_actual_point(direction)
-        print()
+        self.length += 1
 
     def add_traffic_to_actual_point(self, direction):
         if direction is direction.top:
