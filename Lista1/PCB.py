@@ -54,14 +54,15 @@ class PCB:
                     self.board[actual_point[1]][actual_point[0]] += 1
 
     def print_board(self):
-        print("Number appear in each of the points")
-        print("- x -> \t ^ y ^")
+        ##print("Number appear in each of the points")
+        ##print("- x -> \t ^ y ^")
         for i_height in range(self.height, 0, -1):
             for i_width in range(self.width):
-                print("x" + str(i_width) + " y" + str(i_height - 1) + ": "
-                      + str(self.board[i_height - 1][i_width])
-                      + "\t", end="")
-            print("")
+                ##print("x" + str(i_width) + " y" + str(i_height - 1) + ": "
+                ##      + str(self.board[i_height - 1][i_width])
+                ##      + "\t", end="")
+                pass
+            ##print("")
 
     def calculate_score(self):
         self.recalculate_occurrence_in_pcb_points()
@@ -70,14 +71,15 @@ class PCB:
             path_item.calculate_intersections(self.board)
             path_item.calculate_score()
             self.score += path_item.score
-        print("Total PCB score (less = better): " + str(self.score))
+        ##print("Total PCB score (less = better): " + str(self.score))
 
     def print_info_about_path(self):
         for path in self.path_list:
-            print("=================== PATH ======================")
-            print("Path start: " + str(path.start_point))
-            print("Path end: " + str(path.end_point))
-            print("Path length: " + str(path.length))
-            print("Path number of intersections: " + str(path.number_of_intersections))
-            print("Path number of segments: " + str(path.number_of_segments))
-            print("===============================================")
+            ##print("=================== PATH ======================")
+            ##print("Path start: " + str(path.start_point))
+            ##print("Path end: " + str(path.end_point))
+            ##print("Path length: " + str(path.length))
+            ##print("Path number of intersections: " + str(path.number_of_intersections))
+            ##print("Path number of segments: " + str(path.number_of_segments))
+            ##print("===============================================")
+            pass
