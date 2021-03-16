@@ -1,4 +1,5 @@
 from random import randint
+import sys
 
 PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT = 0.3
 PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.3
@@ -21,23 +22,23 @@ def roulette_operation(pcb_list):
     for pcb in pcb_list:
         total_score += pcb.score
         # roulette_field.append(total_score)
-    while len(drawn_pcb) != len(pcb_list) * PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT:
-        rand = randint(1, total_score)
+    while len(drawn_pcb) != len(pcb_list) * PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE:
+        rand = randint(1, int(total_score))
         total_score_search = 0
         for i in range(len(pcb_list)):
             actual_pcb_score = pcb_list[i].score
             total_score_search += actual_pcb_score
-            if total_score_search < rand:
-                drawn_pcb[i] = actual_pcb_score
+            if total_score_search > rand:
+                drawn_pcb[i - 1] = actual_pcb_score
                 break
     return choose_the_best(drawn_pcb)
 
 
 def choose_the_best(pcb_list):
-    the_best_score = 0
+    the_best_score = sys.maxsize
     the_best_score_index = 0
-    for i in range(len(pcb_list)):
-        if pcb_list[i] < the_best_score:
-            the_best_score = pcb_list[i]
-            the_best_score_index = i
+    for index, score in pcb_list.items():
+        if score < the_best_score:
+            the_best_score = score
+            the_best_score_index = index
     return pcb_list[the_best_score_index]
