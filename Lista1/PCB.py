@@ -18,25 +18,28 @@ class PCB:
             self.path_list.append(Path(point[0], point[1]))
 
     def create_random_solution(self):
-        index = -1
         for my_path in self.path_list:
-            index += 1
-            while my_path.actual_point != my_path.end_point:
-                available_traffic_direction = []
-                for chosen_direction in Direction:
-                    if chosen_direction is Direction.top:
-                        if (my_path.actual_point[1] - self.height + 1) * -1 > 0:
-                            available_traffic_direction.append(chosen_direction)
-                    elif chosen_direction is Direction.bottom:
-                        if my_path.actual_point[1] > 0:
-                            available_traffic_direction.append(chosen_direction)
-                    elif chosen_direction is Direction.left:
-                        if my_path.actual_point[0] > 0:
-                            available_traffic_direction.append(chosen_direction)
-                    elif chosen_direction is Direction.right:
-                        if (my_path.actual_point[0] - self.width + 1) * -1 > 0:
-                            available_traffic_direction.append(chosen_direction)
-                my_path.add_random_segment_to_path(available_traffic_direction)
+            self.creat_random_path_solution(my_path)
+
+    def creat_random_path_solution(self, path):
+        path.length = 0
+        path.number_of_segments = 0
+        while path.actual_point != path.end_point:
+            available_traffic_direction = []
+            for chosen_direction in Direction:
+                if chosen_direction is Direction.top:
+                    if (path.actual_point[1] - self.height + 1) * -1 > 0:
+                        available_traffic_direction.append(chosen_direction)
+                elif chosen_direction is Direction.bottom:
+                    if path.actual_point[1] > 0:
+                        available_traffic_direction.append(chosen_direction)
+                elif chosen_direction is Direction.left:
+                    if path.actual_point[0] > 0:
+                        available_traffic_direction.append(chosen_direction)
+                elif chosen_direction is Direction.right:
+                    if (path.actual_point[0] - self.width + 1) * -1 > 0:
+                        available_traffic_direction.append(chosen_direction)
+            path.add_random_segment_to_path(available_traffic_direction)
 
     def create_clean_board(self):
         for i_height in range(self.height):
