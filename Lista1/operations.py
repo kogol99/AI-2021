@@ -6,12 +6,12 @@ from PCB import PCB
 from readFile import ReadFile
 
 PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT = 0.3
-PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.3
-PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.5
+PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.001
+PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.1
 PERCENTAGE_OF_CHANCES_FOR_CROSSOVER = 0.5
 PERCENTAGE_OF_CHANCES_FOR_MUTATION = 0.5
-POPULATION_SIZE = 50
-NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 100
+POPULATION_SIZE = 100
+NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 20
 
 
 def tournament_operation(pcb_list):
@@ -69,7 +69,7 @@ def mutation_operation(pcb, chance_for_mutation):
     new_pcb = copy(pcb)
     if uniform(0, 1) < PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION:
         new_pcb.create_random_solution()
-    elif uniform(0,1) < chance_for_mutation:
+    elif uniform(0, 1) < chance_for_mutation:
         rand = randint(0, len(new_pcb.path_list) - 1)
         new_pcb.creat_random_path_solution(new_pcb.path_list[rand])
 
@@ -113,7 +113,7 @@ def run_algorithm(type_of_selection="roulette"):
 
 
 def initialize_start_population():
-    reader = ReadFile("TestData\zad3.txt")
+    reader = ReadFile("TestData\zad10.txt")
     width, height, points_list = reader.get_data()
     population_list = []
     for i in range(POPULATION_SIZE):

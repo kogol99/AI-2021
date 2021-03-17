@@ -18,13 +18,14 @@ class PCB:
             self.path_list.append(Path(point[0], point[1]))
 
     def create_random_solution(self):
+        self.score = 0
         for my_path in self.path_list:
             self.creat_random_path_solution(my_path)
 
     def creat_random_path_solution(self, path):
-        path.length = 0
-        path.number_of_segments = 0
-        while path.actual_point != path.end_point:
+        path.actual_point = copy(path.start_point)
+        path.segment_list = []
+        while not (path.actual_point[0] == path.end_point[0] and path.actual_point[1] == path.end_point[1]):
             available_traffic_direction = []
             for chosen_direction in Direction:
                 if chosen_direction is Direction.top:
@@ -42,6 +43,7 @@ class PCB:
             path.add_random_segment_to_path(available_traffic_direction)
 
     def create_clean_board(self):
+        self.board = []
         for i_height in range(self.height):
             self.board.append([])
             for i_width in range(self.width):
@@ -51,7 +53,9 @@ class PCB:
         for path_item in self.path_list:
             actual_point = copy(path_item.start_point)
             self.board[actual_point[0]][actual_point[1]] += 1
+            index = 0
             for segment_item in path_item.segment_list:
+                index += 1
                 for i in range(segment_item.length):
                     actual_point = add_traffic_to_point(actual_point, segment_item.direction)
                     self.board[actual_point[1]][actual_point[0]] += 1

@@ -62,9 +62,12 @@ class Path:
     def calculate_intersections(self, board):
         actual_point = copy(self.start_point)
         self.number_of_intersections = 0
+        self.length = 0
+        self.number_of_segments = len(self.segment_list)
         for segment_item in self.segment_list:
             for i in range(segment_item.length):
                 actual_point = add_traffic_to_point(actual_point, segment_item.direction)
+                self.length += 1
                 if board[actual_point[1]][actual_point[0]] > 1:
                     self.number_of_intersections += 1
 
