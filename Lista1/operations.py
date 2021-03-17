@@ -45,3 +45,14 @@ def choose_the_best(pcb_list):
             the_best_score = score
             the_best_score_index = index
     return pcb_list[the_best_score_index]
+
+
+def crossover_operation(pcb_1, pcb_2):
+    pcb_1 = copy(pcb_1)
+    new_pcb = pcb_1
+    number_of_path = len(pcb_1.path_list)
+    rand = randint(0, number_of_path - 1)
+    for i in range(rand, number_of_path - 1):
+        new_pcb.path_list[i] = copy(pcb_2.path_list[i])
+    return new_pcb
+
