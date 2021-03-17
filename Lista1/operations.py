@@ -1,3 +1,4 @@
+from copy import copy
 from random import randint
 import sys
 
@@ -22,14 +23,16 @@ def roulette_operation(pcb_list):
     for pcb in pcb_list:
         total_score += pcb.score
         # roulette_field.append(total_score)
+    total_reverse_score = 0
+    for pcb in pcb_list:
+        total_reverse_score += total_score - pcb.score
     while len(drawn_pcb) != len(pcb_list) * PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE:
-        rand = randint(1, int(total_score))
+        rand = randint(1, int(total_reverse_score))
         total_score_search = 0
         for i in range(len(pcb_list)):
-            actual_pcb_score = pcb_list[i].score
-            total_score_search += actual_pcb_score
+            total_score_search += total_score - pcb_list[i].score
             if total_score_search > rand:
-                drawn_pcb[i - 1] = actual_pcb_score
+                drawn_pcb[i] = pcb_list[i].score
                 break
     return choose_the_best(drawn_pcb)
 

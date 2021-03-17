@@ -15,7 +15,7 @@ if __name__ == '__main__':
         test.create_clean_board()
         test.calculate_score()
         population_list.append(test)
-
+        
     print(tournament_operation(population_list))
     print(roulette_operation(population_list))
     # test = PCB([[[0, 0], [2, 2]]], 3, 3)
