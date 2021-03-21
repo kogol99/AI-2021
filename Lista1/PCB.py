@@ -52,7 +52,7 @@ class PCB:
     def recalculate_occurrence_in_pcb_points(self):
         for path_item in self.path_list:
             actual_point = copy(path_item.start_point)
-            self.board[actual_point[0]][actual_point[1]] += 1
+            self.board[actual_point[1]][actual_point[0]] += 1
             index = 0
             for segment_item in path_item.segment_list:
                 index += 1
@@ -88,3 +88,38 @@ class PCB:
             print("Path number of intersections: " + str(path.number_of_intersections))
             print("Path number of segments: " + str(path.number_of_segments))
             print("===============================================")
+
+    def print_pcb_solution(self):
+        good_board = []
+        for i_height in range(self.height):
+            good_board.append([])
+            for i_width in range(self.width):
+                good_board[i_height].append(0)
+        index = 1
+        for i in range(len(self.path_list)):
+            actual_point = copy(self.path_list[i].start_point)
+            good_board[actual_point[1]][actual_point[0]] = index
+            for segment_item in self.path_list[i].segment_list:
+                for i in range(segment_item.length):
+                    self.board[actual_point[1]][actual_point[0]] = index
+                    actual_point = add_traffic_to_point(actual_point, segment_item.direction)
+                self.board[actual_point[1]][actual_point[0]] = index
+            index += 1
+        print("Solution: ")
+        print("- x -> \t ^ y ^")
+        for i_height in range(self.height, 0, -1):
+            for i_width in range(self.width):
+                print("x" + str(i_width) + " y" + str(i_height - 1) + ": "
+                      + str(self.board[i_height - 1][i_width])
+                      + "\t", end="")
+            print("")
+
+    def check_intersections(self):
+        intersections = 0
+        for path in self.path_list:
+            intersections_number = path.number_of_intersections
+            intersections += intersections_number
+            if intersections_number > 0:
+                print(intersections, " conajmniej przecięć")
+                return False
+        return True

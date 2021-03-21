@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from random import randint, randrange, uniform
 import sys
 
@@ -6,12 +6,12 @@ from PCB import PCB
 from readFile import ReadFile
 
 PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT = 0.3
-PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.001
-PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.1
+PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.2
+PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.3
 PERCENTAGE_OF_CHANCES_FOR_CROSSOVER = 0.5
 PERCENTAGE_OF_CHANCES_FOR_MUTATION = 0.5
-POPULATION_SIZE = 100
-NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 20
+POPULATION_SIZE = 50
+NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 49
 
 
 def tournament_operation(pcb_list):
@@ -56,22 +56,21 @@ def choose_the_best(pcb_list):
 
 
 def crossover_operation(pcb_1, pcb_2):
-    pcb_1 = copy(pcb_1)
+    pcb_1 = deepcopy(pcb_1)
     new_pcb = pcb_1
     number_of_path = len(pcb_1.path_list)
     rand = randint(0, number_of_path - 1)
     for i in range(rand, number_of_path - 1):
-        new_pcb.path_list[i] = copy(pcb_2.path_list[i])
+        new_pcb.path_list[i] = deepcopy(pcb_2.path_list[i])
     return new_pcb
 
 
 def mutation_operation(pcb, chance_for_mutation):
-    new_pcb = copy(pcb)
     if uniform(0, 1) < PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION:
-        new_pcb.create_random_solution()
+        pcb.create_random_solution()
     elif uniform(0, 1) < chance_for_mutation:
-        rand = randint(0, len(new_pcb.path_list) - 1)
-        new_pcb.creat_random_path_solution(new_pcb.path_list[rand])
+        rand = randint(0, len(pcb.path_list) - 1)
+        pcb.creat_random_path_solution(pcb.path_list[rand])
 
 
 def run_algorithm(type_of_selection="roulette"):
@@ -81,7 +80,8 @@ def run_algorithm(type_of_selection="roulette"):
     previous_the_best_score = sys.maxsize
     last_the_best_score = sys.maxsize
     number_of_repetitions_the_best_score = 0
-    while number_of_repetitions_the_best_score <= NUMBER_OF_REPEATIONS_THE_BEST_SCORE:
+    there_are_intersections = False
+    while number_of_repetitions_the_best_score <= NUMBER_OF_REPEATIONS_THE_BEST_SCORE or not there_are_intersections:
         list_of_population_list.append([])
         while len(list_of_population_list[t+1]) != len(list_of_population_list[0]):
             if type_of_selection == "tournament":
@@ -93,7 +93,7 @@ def run_algorithm(type_of_selection="roulette"):
             if uniform(0, 1) < PERCENTAGE_OF_CHANCES_FOR_CROSSOVER:
                 o1 = crossover_operation(p1, p2)
             else:
-                o1 = copy(p1)
+                o1 = deepcopy(p1)
             mutation_operation(o1, PERCENTAGE_OF_CHANCES_FOR_MUTATION)
             evaluate_pcb(o1)
             list_of_population_list[t+1].append(o1)
@@ -103,17 +103,18 @@ def run_algorithm(type_of_selection="roulette"):
                 the_best_solution = o1
                 number_of_repetitions_the_best_score = 0
                 print("New the best score: ", last_the_best_score)
-        print("Przeszla cala populacja")
+        print("The entire population has passed")
         if previous_the_best_score == last_the_best_score:
             number_of_repetitions_the_best_score += 1
             print("Repeat: ", number_of_repetitions_the_best_score)
         previous_the_best_score = last_the_best_score
+        there_are_intersections = the_best_solution.check_intersections()
         t += 1
     return the_best_solution
 
 
 def initialize_start_population():
-    reader = ReadFile("TestData\zad10.txt")
+    reader = ReadFile("TestData\zad1.txt")
     width, height, points_list = reader.get_data()
     population_list = []
     for i in range(POPULATION_SIZE):

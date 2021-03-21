@@ -2,8 +2,8 @@ from copy import copy
 from random import choice
 from segment import Segment
 
-INTERSECTIONS_WEIGHT = 2
-LENGTH_WEIGHT = 0.3
+INTERSECTIONS_WEIGHT = 3.5
+LENGTH_WEIGHT = 0.4
 SEGMENT_WEIGHT = 0.5
 
 
