@@ -21,6 +21,7 @@ class PCB:
         self.score = 0
         for my_path in self.path_list:
             self.creat_random_path_solution(my_path)
+        self.repair_paths()
 
     def creat_random_path_solution(self, path):
         path.actual_point = copy(path.start_point)
@@ -41,6 +42,7 @@ class PCB:
                     if (path.actual_point[0] - self.width + 1) * -1 > 0:
                         available_traffic_direction.append(chosen_direction)
             path.add_random_segment_to_path(available_traffic_direction)
+        self.repair_path(path)
 
     def create_clean_board(self):
         self.board = []
@@ -123,3 +125,42 @@ class PCB:
                 print(intersections, " conajmniej przecięć")
                 return False
         return True
+
+    def repair_paths(self):
+        for path in self.path_list:
+            self.repair_path(path)
+
+    def repair_path(self, path):
+        segment_list_to_remove = []
+        i = 0
+        while i < len(path.segment_list) - 1:
+        #for i in range(len(path.segment_list) - 1):
+            segment1 = path.segment_list[i]
+            segment2 = path.segment_list[i + 1]
+            if segment1.direction == Direction.top and segment2.direction == Direction.bottom:
+                i += self.repair(segment1, segment2, segment_list_to_remove, i)
+            elif segment1.direction == Direction.bottom and segment2.direction == Direction.top:
+                i += self.repair(segment1, segment2, segment_list_to_remove, i)
+            elif segment1.direction == Direction.left and segment2.direction == Direction.right:
+                i += self.repair(segment1, segment2, segment_list_to_remove, i)
+            elif segment1.direction == Direction.right and segment2.direction == Direction.left:
+                i += self.repair(segment1, segment2, segment_list_to_remove, i)
+            i += 1
+        for i in range(len(segment_list_to_remove), 0, -1):
+            del path.segment_list[segment_list_to_remove[i - 1]]
+            #path.segment_list.remove(segment_list_to_remove[i - 1])
+
+    def repair(self, segment1, segment2, segment_list_to_remove, i):
+        difference = segment1.length - segment2.length
+        if difference > 0:
+            segment1.length = difference
+            segment_list_to_remove.append(i + 1)
+            return 1
+        elif difference < 0:
+            segment_list_to_remove.append(i)
+            segment2.length = difference * -1
+            return 0
+        elif difference == 0:
+            segment_list_to_remove.append(i)
+            segment_list_to_remove.append(i + 1)
+            return 1

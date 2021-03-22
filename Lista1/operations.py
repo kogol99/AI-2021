@@ -6,11 +6,11 @@ from PCB import PCB
 from readFile import ReadFile
 
 PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT = 0.3
-PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.2
-PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.3
+PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.1
+PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.1
 PERCENTAGE_OF_CHANCES_FOR_CROSSOVER = 0.5
 PERCENTAGE_OF_CHANCES_FOR_MUTATION = 0.5
-POPULATION_SIZE = 50
+POPULATION_SIZE = 400
 NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 49
 
 
@@ -56,12 +56,13 @@ def choose_the_best(pcb_list):
 
 
 def crossover_operation(pcb_1, pcb_2):
-    pcb_1 = deepcopy(pcb_1)
-    new_pcb = pcb_1
+    new_pcb = PCB(copy(pcb_1.points_list), copy(pcb_1.width), copy(pcb_1.height))
     number_of_path = len(pcb_1.path_list)
     rand = randint(0, number_of_path - 1)
-    for i in range(rand, number_of_path - 1):
-        new_pcb.path_list[i] = deepcopy(pcb_2.path_list[i])
+    for i in range(0, rand):
+        new_pcb.path_list.append(deepcopy(pcb_1.path_list[i]))
+    for i in range(rand, number_of_path):
+        new_pcb.path_list.append(deepcopy(pcb_2.path_list[i]))
     return new_pcb
 
 
@@ -80,10 +81,11 @@ def run_algorithm(type_of_selection="roulette"):
     previous_the_best_score = sys.maxsize
     last_the_best_score = sys.maxsize
     number_of_repetitions_the_best_score = 0
+    len_of_list_of_population = len(list_of_population_list[0])
     there_are_intersections = False
     while number_of_repetitions_the_best_score <= NUMBER_OF_REPEATIONS_THE_BEST_SCORE or not there_are_intersections:
         list_of_population_list.append([])
-        while len(list_of_population_list[t+1]) != len(list_of_population_list[0]):
+        while len(list_of_population_list[t+1]) != len_of_list_of_population:
             if type_of_selection == "tournament":
                 p1 = tournament_operation(list_of_population_list[t])
                 p2 = tournament_operation(list_of_population_list[t])
@@ -109,18 +111,19 @@ def run_algorithm(type_of_selection="roulette"):
             print("Repeat: ", number_of_repetitions_the_best_score)
         previous_the_best_score = last_the_best_score
         there_are_intersections = the_best_solution.check_intersections()
-        t += 1
+        list_of_population_list.pop(t)
     return the_best_solution
 
 
 def initialize_start_population():
-    reader = ReadFile("TestData\zad1.txt")
+    reader = ReadFile("TestData\zad2.txt")
     width, height, points_list = reader.get_data()
     population_list = []
     for i in range(POPULATION_SIZE):
         pcb = PCB(points_list, width, height)
         pcb.assign_points()
         pcb.create_random_solution()
+        pcb.repair_paths()
         population_list.append(pcb)
     return population_list
 
