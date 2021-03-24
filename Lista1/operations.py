@@ -1,17 +1,19 @@
 from copy import copy, deepcopy
-from random import randint, randrange, uniform
+from random import randint, uniform
 import sys
 
 from PCB import PCB
 from readFile import ReadFile
 
 PERCENTAGE_OF_THE_POPULATION_TO_TOURNAMENT = 0.3
-PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.1
-PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.1
-PERCENTAGE_OF_CHANCES_FOR_CROSSOVER = 0.5
+PERCENTAGE_OF_THE_POPULATION_TO_ROULETTE = 0.01
+PERCENTAGE_OF_CHANCES_FOR_FULL_MUTATION = 0.001
+PERCENTAGE_OF_CHANCES_FOR_CROSSOVER = 0.7
 PERCENTAGE_OF_CHANCES_FOR_MUTATION = 0.5
-POPULATION_SIZE = 400
-NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 49
+PERCENTAGE_OF_CHANCES_FOR_MIDDLE_MUTATION = 0.5
+POPULATION_SIZE = 50
+NUMBER_OF_REPEATIONS_THE_BEST_SCORE = 100
+MAX_POPULATION_AMOUNT = 100
 
 
 def tournament_operation(pcb_list):
@@ -25,12 +27,8 @@ def tournament_operation(pcb_list):
 def roulette_operation(pcb_list):
     drawn_pcb = {}
     total_score = 0
-    # TODO improving value searches
-    # Create an array with total values. When searching, divide it in half to find the value.
-    # roulette_field = []
     for pcb in pcb_list:
         total_score += pcb.score
-        # roulette_field.append(total_score)
     total_reverse_score = 0
     for pcb in pcb_list:
         total_reverse_score += total_score - pcb.score
@@ -71,10 +69,18 @@ def mutation_operation(pcb, chance_for_mutation):
         pcb.create_random_solution()
     elif uniform(0, 1) < chance_for_mutation:
         rand = randint(0, len(pcb.path_list) - 1)
-        pcb.creat_random_path_solution(pcb.path_list[rand])
+        if uniform(0, 1) < PERCENTAGE_OF_CHANCES_FOR_MIDDLE_MUTATION:
+            middle = True
+        else:
+            middle = False
+        pcb.creat_random_path_solution(pcb.path_list[rand], middle)
 
 
 def run_algorithm(type_of_selection="roulette"):
+    min_list = []
+    max_list = []
+    avg_list = []
+    count_list = []
     t = 0
     list_of_population_list = [initialize_start_population()]
     evaluate_population(list_of_population_list[t])
@@ -83,7 +89,9 @@ def run_algorithm(type_of_selection="roulette"):
     number_of_repetitions_the_best_score = 0
     len_of_list_of_population = len(list_of_population_list[0])
     there_are_intersections = False
-    while number_of_repetitions_the_best_score <= NUMBER_OF_REPEATIONS_THE_BEST_SCORE or not there_are_intersections:
+    number_of_population = 1
+    # while number_of_repetitions_the_best_score <= NUMBER_OF_REPEATIONS_THE_BEST_SCORE: # or not there_are_intersections:
+    while number_of_population < MAX_POPULATION_AMOUNT + 1:
         list_of_population_list.append([])
         while len(list_of_population_list[t+1]) != len_of_list_of_population:
             if type_of_selection == "tournament":
@@ -96,6 +104,7 @@ def run_algorithm(type_of_selection="roulette"):
                 o1 = crossover_operation(p1, p2)
             else:
                 o1 = deepcopy(p1)
+            evaluate_pcb(o1)
             mutation_operation(o1, PERCENTAGE_OF_CHANCES_FOR_MUTATION)
             evaluate_pcb(o1)
             list_of_population_list[t+1].append(o1)
@@ -104,19 +113,48 @@ def run_algorithm(type_of_selection="roulette"):
                 last_the_best_score = o1.score
                 the_best_solution = o1
                 number_of_repetitions_the_best_score = 0
-                print("New the best score: ", last_the_best_score)
-        print("The entire population has passed")
+                # print("New the best score: ", last_the_best_score)
+        # print(str(number_of_population) + " - The entire population has passed")
         if previous_the_best_score == last_the_best_score:
             number_of_repetitions_the_best_score += 1
-            print("Repeat: ", number_of_repetitions_the_best_score)
+            # print("Repeat: ", number_of_repetitions_the_best_score)
         previous_the_best_score = last_the_best_score
-        there_are_intersections = the_best_solution.check_intersections()
+        the_best_solution.check_intersections()
         list_of_population_list.pop(t)
-    return the_best_solution
+        min_list.append(search_min(list_of_population_list[0]))
+        max_list.append(search_max(list_of_population_list[0]))
+        avg_list.append(calc_avg(list_of_population_list[0]))
+        count_list.append(number_of_population)
+        number_of_population += 1
+    return the_best_solution, min_list, max_list, avg_list, count_list
+
+
+def search_max(list_of_population):
+    max_value = 0
+    for item in list_of_population:
+        if item.score > max_value:
+            max_value = item.score
+    return max_value
+
+
+def search_min(list_of_population):
+    min_value = sys.maxsize
+    for item in list_of_population:
+        if item.score < min_value:
+            min_value = item.score
+    return min_value
+
+
+def calc_avg(list_of_population):
+    amount = len(list_of_population)
+    sum_value = 0
+    for item in list_of_population:
+        sum_value += item.score
+    return sum_value/amount
 
 
 def initialize_start_population():
-    reader = ReadFile("TestData\zad2.txt")
+    reader = ReadFile("TestData\zad1.txt")
     width, height, points_list = reader.get_data()
     population_list = []
     for i in range(POPULATION_SIZE):

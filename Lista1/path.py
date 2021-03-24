@@ -2,9 +2,9 @@ from copy import copy
 from random import choice
 from segment import Segment
 
-INTERSECTIONS_WEIGHT = 3.5
-LENGTH_WEIGHT = 0.4
-SEGMENT_WEIGHT = 0.5
+INTERSECTIONS_WEIGHT = 1000
+LENGTH_WEIGHT = 1
+SEGMENT_WEIGHT = 2
 
 
 def add_traffic_to_point(point, direction):
@@ -74,3 +74,19 @@ class Path:
     def calculate_score(self):
         self.score = INTERSECTIONS_WEIGHT * self.number_of_intersections + LENGTH_WEIGHT * self.length + \
                       SEGMENT_WEIGHT * self.number_of_segments
+
+    def find_first_intersection_point_of_the_path(self, board):
+        actual_checking_point = copy(self.start_point)
+        self.actual_point = copy(self.start_point)
+        for i in range(len(self.segment_list)):
+            for j in range(self.segment_list[i].length):
+                actual_checking_point = add_traffic_to_point(actual_checking_point, self.segment_list[i].direction)
+                if board[actual_checking_point[1]][actual_checking_point[0]] > 1:
+                    if j == 0:
+                        return self.actual_point, i - 1
+                    if j != 0 and j < self.segment_list[i].length:
+                        self.segment_list[i].length = j
+                        return self.actual_point, i
+                else:
+                    self.actual_point = add_traffic_to_point(self.actual_point, self.segment_list[i].direction)
+        return self.actual_point, -1
