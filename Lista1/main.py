@@ -1,14 +1,8 @@
+import sys
 import numpy
 
 from drawing_charts import show_plot
 from operations import run_algorithm
-
-POPULATION_SIZE = 5
-
-
-def print_list(list):
-    for i in range(len(list)):
-        print(list[i])
 
 
 if __name__ == '__main__':
@@ -20,23 +14,43 @@ if __name__ == '__main__':
     # the_best.print_pcb_solution()
     max_amount = []
     min_amount = []
-    avg_amount = []
-    std_amount = []
+
+    list_of_min_list = []
+    list_of_max_list = []
+    min_list_to_plot = []
+    max_list_to_plot = []
+    avg_list_to_plot = []
+
     for i in range(3):
-        the_best, min_list, max_list, avg_list, count_list = run_algorithm("tournament")
-        max_amount.append(max(max_list))
+        the_best, min_list, max_list, avg_list, count_list = run_algorithm("roulette")
         min_amount.append(min(min_list))
-        avg_amount.append(round(sum(avg_list)/len(avg_list), 2))
-        std_amount.append(round(numpy.std(avg_list), 2))
-        show_plot(min_list, max_list, avg_list, count_list)
-    print("Max value")
-    print_list(max_amount)
+        max_amount.append(max(max_list))
+        list_of_min_list.append(min_list)
+        list_of_max_list.append(max_list)
+    for i in range(len(count_list)):
+        max_value = 0
+        min_value = sys.maxsize
+        sum_min_value = 0
+        sum_max_value = 0
+        for j in range(len(list_of_max_list)):
+            sum_min_value += list_of_min_list[j][i]
+            sum_max_value += list_of_max_list[j][i]
+            if min_value > list_of_min_list[j][i]:
+                min_value = list_of_min_list[j][i]
+        min_list_to_plot.append(min_value)
+        max_list_to_plot.append(sum_max_value/len(list_of_max_list))
+        avg_list_to_plot.append(sum_min_value/len(list_of_min_list))
+
+    show_plot(min_list_to_plot, max_list_to_plot, avg_list_to_plot, count_list)
+
     print("Min value")
-    print_list(min_amount)
+    print(min(min_amount))
+    print("Max value")
+    print(max(max_amount))
     print("Avg value")
-    print_list(avg_amount)
+    print(round(sum(min_amount)/len(min_amount), 2))
     print("Std value")
-    print_list(std_amount)
+    print(round(numpy.std(min_amount), 2))
 
 
 
