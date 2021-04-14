@@ -7,11 +7,21 @@ import java.util.*;
 public class main {
 
     public static void main(String[] args) {
-        //ColoringMap();
-        EinsteinProblem();
+        ConstraintSatisfactionProblem<String, String> mapCSP = ColoringEuropeMap();
+        System.out.println("########### Rozwiązanie dla backTrackingSearch ###########");
+        PrintColoringMapSolution((mapCSP.backTrackingSearch()));
+        System.out.println("\n\n########### Rozwiązanie dla forwardCheckingSearch ###########");
+        PrintColoringMapSolution((mapCSP.forwardCheckingSearchLoop()));
+
+
+        ConstraintSatisfactionProblem<List<String>, String> einsteinCSP = EinsteinProblem();
+        System.out.println("\n\n########### Rozwiązanie dla backTrackingSearch ###########");
+        PrintEinsteinSolution((einsteinCSP.backTrackingSearch()));
+        System.out.println("\n\n########### Rozwiązanie dla forwardCheckingSearch ###########");
+        PrintEinsteinSolution((einsteinCSP.forwardCheckingSearchLoop()));
     }
 
-    static public void ColoringMap(){
+    static public ConstraintSatisfactionProblem<String, String> ColoringOpolskieMap(){
         List<String> variables = Arrays.asList("Opole", "opolski", "namysłowski", "kluczborski", "oleski", "brzeski",
                 "strzelecki", "nyski", "prudnicki", "krapkowicki", "kędzierzyńsko-kozielski", "głubczycki");
         Map<String, List<String>> domains = new HashMap<>();
@@ -42,15 +52,100 @@ public class main {
         csp.addConstraint(new ColoringConstraint("krapkowicki", "kędzierzyńsko-kozielski"));
         csp.addConstraint(new ColoringConstraint("kędzierzyńsko-kozielski", "głubczycki"));
 
-        Map<String, String> solution = csp.backTrackingSearch();
-        if(solution == null) {
-            System.out.println("None solution");
-        } else {
-            solution.forEach((key, value) -> System.out.println(key + ": " + value));
-        }
+        return csp;
     }
 
-    static public void EinsteinProblem(){
+    static public ConstraintSatisfactionProblem<String, String> ColoringEuropeMap(){
+        List<String> variables = Arrays.asList("Iceland", "United Kingdom", "Ireland", "Norway", "Sweden", "Finland", "Estonia", "Latvia",
+                "Lithuania", "Belarus", "Ukraine", "Moldova", "Poland", "Slovakia", "Czech Republic", "Germany", "Austria", "Hungary",
+                "Romania", "Bulgaria", "Macedonia", "Greece", "Albania", "Serbia", "Bosnia and Herzegovina", "Croatia", "Slovenia",
+                "Montenegro", "Liechenstein", "Monaco", "France", "Andorra", "Spain", "Portugal", "Belgium", "Netherlands", "Luxemburg",
+                "Denmark", "Italy", "Malta", "Switzerland");
+        Map<String, List<String>> domains = new HashMap<>();
+        for(String var: variables){
+            domains.put(var, Arrays.asList("blue", "red", "purple", "yellow"));
+        }
+        ConstraintSatisfactionProblem<String, String> csp = new ConstraintSatisfactionProblem<>(variables, domains);
+        csp.addConstraint(new ColoringConstraint("Norway", "Sweden"));
+        csp.addConstraint(new ColoringConstraint("Estonia", "Latvia"));
+        csp.addConstraint(new ColoringConstraint("Latvia", "Lithuania"));
+        csp.addConstraint(new ColoringConstraint("Lithuania", "Belarus"));
+        csp.addConstraint(new ColoringConstraint("Latvia", "Belarus"));
+        csp.addConstraint(new ColoringConstraint("Belarus", "Ukraine"));
+        csp.addConstraint(new ColoringConstraint("Ukraine", "Moldova"));
+        csp.addConstraint(new ColoringConstraint("Ukraine", "Poland"));
+        csp.addConstraint(new ColoringConstraint("Ukraine", "Slovakia"));
+        csp.addConstraint(new ColoringConstraint("Ukraine", "Hungary"));
+        csp.addConstraint(new ColoringConstraint("Ukraine", "Romania"));
+        csp.addConstraint(new ColoringConstraint("Moldova", "Romania"));
+        csp.addConstraint(new ColoringConstraint("Romania", "Hungary"));
+        csp.addConstraint(new ColoringConstraint("Romania", "Serbia"));
+        csp.addConstraint(new ColoringConstraint("Romania", "Bulgaria"));
+        csp.addConstraint(new ColoringConstraint("Bulgaria", "Serbia"));
+        csp.addConstraint(new ColoringConstraint("Bulgaria", "Macedonia"));
+        csp.addConstraint(new ColoringConstraint("Bulgaria", "Greece"));
+        csp.addConstraint(new ColoringConstraint("Greece", "Macedonia"));
+        csp.addConstraint(new ColoringConstraint("Greece", "Albania"));
+        csp.addConstraint(new ColoringConstraint("Albania", "Macedonia"));
+        csp.addConstraint(new ColoringConstraint("Albania", "Serbia"));
+        csp.addConstraint(new ColoringConstraint("Albania", "Montenegro"));
+        csp.addConstraint(new ColoringConstraint("Montenegro", "Serbia"));
+        csp.addConstraint(new ColoringConstraint("Montenegro", "Bosnia and Herzegovina"));
+        csp.addConstraint(new ColoringConstraint("Bosnia and Herzegovina", "Croatia"));
+        csp.addConstraint(new ColoringConstraint("Bosnia and Herzegovina", "Serbia"));
+        csp.addConstraint(new ColoringConstraint("Serbia", "Croatia"));
+        csp.addConstraint(new ColoringConstraint("Serbia", "Hungary"));
+        csp.addConstraint(new ColoringConstraint("Serbia", "Macedonia"));
+        csp.addConstraint(new ColoringConstraint("Hungary", "Croatia"));
+        csp.addConstraint(new ColoringConstraint("Hungary", "Slovenia"));
+        csp.addConstraint(new ColoringConstraint("Hungary", "Austria"));
+        csp.addConstraint(new ColoringConstraint("Hungary", "Slovakia"));
+        csp.addConstraint(new ColoringConstraint("Slovakia", "Austria"));
+        csp.addConstraint(new ColoringConstraint("Slovakia", "Czech Republic"));
+        csp.addConstraint(new ColoringConstraint("Slovakia", "Poland"));
+        csp.addConstraint(new ColoringConstraint("Poland", "Czech Republic"));
+        csp.addConstraint(new ColoringConstraint("Poland", "Belarus"));
+        csp.addConstraint(new ColoringConstraint("Poland", "Germany"));
+        csp.addConstraint(new ColoringConstraint("Poland", "Lithuania"));
+        csp.addConstraint(new ColoringConstraint("Germany", "Czech Republic"));
+        csp.addConstraint(new ColoringConstraint("Czech Republic", "Austria"));
+        csp.addConstraint(new ColoringConstraint("Austria", "Slovenia"));
+        csp.addConstraint(new ColoringConstraint("Austria", "Italy"));
+        csp.addConstraint(new ColoringConstraint("Austria", "Liechenstein"));
+        csp.addConstraint(new ColoringConstraint("Austria", "Germany"));
+        csp.addConstraint(new ColoringConstraint("Liechenstein", "Switzerland"));
+        csp.addConstraint(new ColoringConstraint("Croatia", "Slovenia"));
+        csp.addConstraint(new ColoringConstraint("Italy", "Slovenia"));
+        csp.addConstraint(new ColoringConstraint("Italy", "Switzerland"));
+        csp.addConstraint(new ColoringConstraint("Italy", "France"));
+        csp.addConstraint(new ColoringConstraint("France", "Monaco"));
+        csp.addConstraint(new ColoringConstraint("France", "Andorra"));
+        csp.addConstraint(new ColoringConstraint("France", "Spain"));
+        csp.addConstraint(new ColoringConstraint("France", "Belgium"));
+        csp.addConstraint(new ColoringConstraint("France", "Luxemburg"));
+        csp.addConstraint(new ColoringConstraint("France", "Germany"));
+        csp.addConstraint(new ColoringConstraint("France", "Switzerland"));
+        csp.addConstraint(new ColoringConstraint("Luxemburg", "Belgium"));
+        csp.addConstraint(new ColoringConstraint("Luxemburg", "Germany"));
+        csp.addConstraint(new ColoringConstraint("Germany", "Belgium"));
+        csp.addConstraint(new ColoringConstraint("Netherlands", "Belgium"));
+        csp.addConstraint(new ColoringConstraint("Germany", "Netherlands"));
+        csp.addConstraint(new ColoringConstraint("Germany", "Denmark"));
+        csp.addConstraint(new ColoringConstraint("Germany", "Switzerland"));
+        csp.addConstraint(new ColoringConstraint("Andorra", "Spain"));
+        csp.addConstraint(new ColoringConstraint("Spain", "Portugal"));
+        csp.addConstraint(new ColoringConstraint("Ireland", "United Kingdom"));
+        csp.addConstraint(new ColoringConstraint("France", "United Kingdom"));
+        csp.addConstraint(new ColoringConstraint("Denmark", "Sweden"));
+        csp.addConstraint(new ColoringConstraint("Finland", "Sweden"));
+        csp.addConstraint(new ColoringConstraint("Iceland", "United Kingdom"));
+        csp.addConstraint(new ColoringConstraint("Iceland", "Norway"));
+        csp.addConstraint(new ColoringConstraint("Estonia", "Finland"));
+
+        return csp;
+    }
+
+    static public ConstraintSatisfactionProblem<List<String>, String> EinsteinProblem(){
         List<List<String>> variables = new ArrayList<>();
         List<List<String>> owners = new ArrayList<>();
         owners.add(Arrays.asList("owner", "Norweg")); //0
@@ -85,7 +180,6 @@ public class main {
         animals.add(Arrays.asList("animal", "ptaki"));
         animals.add(Arrays.asList("animal", "psy"));
         animals.add(Arrays.asList("animal", "konie"));
-        animals.add(Arrays.asList("animal", "rybki"));
 
         variables.addAll(owners);
         variables.addAll(homeColors);
@@ -103,40 +197,49 @@ public class main {
         ConstraintSatisfactionProblem<List<String>, String> csp
                 = new ConstraintSatisfactionProblem<>(variables, domains);
 
-//        1.Norweg zamieszkuje pierwszy dom
+//        1.Norweg zamieszkuje pierwszy dom+
         domains.put(owners.get(0), Arrays.asList(houses.get(0)));
-//        2. Anglik mieszka w czerwonym domu.
+//        2. Anglik mieszka w czerwonym domu.+
         csp.addConstraint(new EinsteinConstraint(owners.get(1), homeColors.get(0)));
-//        3. Zielony dom znajduje się bezpośrednio po lewej stronie domu białego.
+//        3. Zielony dom znajduje się bezpośrednio po lewej stronie domu białego.+
         csp.addConstraint(new EinsteinConstraint(homeColors.get(1), homeColors.get(2), true, true));
-//        4. Duńczyk pija herbatkę.
+//        4. Duńczyk pija herbatkę.+
         csp.addConstraint(new EinsteinConstraint(owners.get(2), drinks.get(0)));
-//        5. Palacz papierosów light mieszka obok hodowcy kotów.
+//        5. Palacz papierosów light mieszka obok hodowcy kotów.+
         csp.addConstraint(new EinsteinConstraint(cigarettes.get(0), animals.get(0), true));
-//        6. Mieszkaniec żółtego domu pali cygara.
+//        6. Mieszkaniec żółtego domu pali cygara.+
         csp.addConstraint(new EinsteinConstraint(homeColors.get(3),cigarettes.get(2)));
-//        7. Niemiec pali fajkę.
+//        7. Niemiec pali fajkę.+
         csp.addConstraint(new EinsteinConstraint(owners.get(3), cigarettes.get(1)));
-//        8. Mieszkaniec środkowego domu pija mleko.
+//        8. Mieszkaniec środkowego domu pija mleko.+
         domains.put(drinks.get(1), Arrays.asList(houses.get(2)));
-//        9. Palacz papierosów light ma sąsiada, który pija wodę.
+//        9. Palacz papierosów light ma sąsiada, który pija wodę.+
         csp.addConstraint(new EinsteinConstraint(cigarettes.get(0), drinks.get(2), true));
-//        10.Palacz papierosów bez filtra hoduje ptaki.
+//        10.Palacz papierosów bez filtra hoduje ptaki.+
         csp.addConstraint(new EinsteinConstraint(cigarettes.get(3), animals.get(1)));
-//        11.Szwed hoduje psy.
+//        11.Szwed hoduje psy.+
         csp.addConstraint(new EinsteinConstraint(owners.get(4), animals.get(2)));
-//        12.Norweg mieszka obok niebieskiego domu.
-        domains.put(homeColors.get(4), Arrays.asList(houses.get(1)));
-        //csp.addConstraint(new EinsteinConstraint(owners.get(0), homeColors.get(4), true));
+//        12.Norweg mieszka obok niebieskiego domu.+
+        csp.addConstraint(new EinsteinConstraint(owners.get(0), homeColors.get(4), true));
 //        13.Hodowca koni mieszka obok żółtego domu.
         csp.addConstraint(new EinsteinConstraint(animals.get(3), homeColors.get(3), true));
-//        14.Palacz mentolowych pija piwo.
+//        14.Palacz mentolowych pija piwo.+
         csp.addConstraint(new EinsteinConstraint(cigarettes.get(4), drinks.get(3)));
-//        15.W zielonym domu pija się kawę.
+//        15.W zielonym domu pija się kawę.+
         csp.addConstraint(new EinsteinConstraint(homeColors.get(1), drinks.get(4)));
 
+        return csp;
+    }
 
-        Map<List<String>,String> solution = csp.backTrackingSearch();
+    public static void PrintColoringMapSolution(Map<String, String> solution){
+        if(solution == null) {
+            System.out.println("None solution");
+        } else {
+            solution.forEach((key, value) -> System.out.println(key + ": " + value));
+        }
+    }
+
+    public static void PrintEinsteinSolution(Map<List<String>,String> solution){
         Map<List<String>,String> solutionHouse1 = new HashMap<>();
         Map<List<String>,String> solutionHouse2 = new HashMap<>();
         Map<List<String>,String> solutionHouse3 = new HashMap<>();

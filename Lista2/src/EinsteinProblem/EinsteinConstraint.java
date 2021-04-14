@@ -1,11 +1,9 @@
 package EinsteinProblem;
 
 import CSP.Constraint;
-import com.sun.deploy.uitoolkit.Window;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class EinsteinConstraint extends Constraint<List<String>, String> {
@@ -15,7 +13,7 @@ public class EinsteinConstraint extends Constraint<List<String>, String> {
     public boolean isLeftNeighbours;
 
     public EinsteinConstraint(List<String> spec1, List<String> spec2) {
-        super(Arrays.asList(spec1));
+        super(Arrays.asList(spec1, spec2));
         this.spec1 = spec1;
         this.spec2 = spec2;
         this.neighbours = false;
@@ -23,7 +21,7 @@ public class EinsteinConstraint extends Constraint<List<String>, String> {
     }
 
     public EinsteinConstraint(List<String> spec1, List<String> spec2, boolean neighbours) {
-        super(Arrays.asList(spec1));
+        super(Arrays.asList(spec1, spec2));
         this.spec1 = spec1;
         this.spec2 = spec2;
         this.neighbours = neighbours;
@@ -31,7 +29,7 @@ public class EinsteinConstraint extends Constraint<List<String>, String> {
     }
 
     public EinsteinConstraint(List<String> spec1, List<String> spec2, boolean neighbours, boolean isLeftNeighbours) {
-        super(Arrays.asList(spec1));
+        super(Arrays.asList(spec1, spec2));
         this.spec1 = spec1;
         this.spec2 = spec2;
         this.neighbours = neighbours;
