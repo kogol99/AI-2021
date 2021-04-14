@@ -7,8 +7,10 @@ public class ConstraintSatisfactionProblem<V, D> {
     private final List<V> variables;
     private final Map<V, List<D>> domains;
     private final Map<V, List<Constraint<V, D>>> constraints;
-    private final static String VALUE_HEURISTIC = "theMostConstrained"; //first, theMostConstrained
+    private final static String VALUE_HEURISTIC = "first"; //first, theMostConstrained
     private final static String DOMAIN_HEURISTIC = "random"; //random, leastUsed
+
+    private int visiting = 0;
 
 
     public ConstraintSatisfactionProblem(List<V> variables, Map<V, List<D>> domains) {
@@ -44,6 +46,7 @@ public class ConstraintSatisfactionProblem<V, D> {
     }
 
     public Map<V, D> backTrackingSearch() {
+        this.visiting = 0;
         return backTrackingSearch(new HashMap<>());
     }
 
@@ -51,6 +54,7 @@ public class ConstraintSatisfactionProblem<V, D> {
         if (assignment.size() == variables.size()) {
             return assignment;
         }
+        this.visiting++;
 
         V unassigned = getNextUnassignedVar(assignment);
         for (D value : domains.get(unassigned)) {
@@ -68,6 +72,7 @@ public class ConstraintSatisfactionProblem<V, D> {
     }
 
     public Map<V, D> forwardCheckingSearchLoop(){
+        this.visiting = 0;
         Map<V, D> result = null;
         while (result == null){
             result = forwardCheckingSearch();
@@ -83,9 +88,9 @@ public class ConstraintSatisfactionProblem<V, D> {
         if (assignment.size() == variables.size()) {
             return assignment;
         }
+        this.visiting++;
 
         V unassigned = getNextUnassignedVar(assignment);
-
         List<D> valuesList = this.getAvailableDomains(unassigned, assignment);
         if (valuesList.isEmpty())
             return null;
@@ -169,4 +174,7 @@ public class ConstraintSatisfactionProblem<V, D> {
         return bestVariable;
     }
 
+    public int getVisiting() {
+        return visiting;
+    }
 }

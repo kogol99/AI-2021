@@ -5,20 +5,35 @@ import EinsteinProblem.EinsteinConstraint;
 import java.util.*;
 
 public class main {
+    private static final int NO_OF_OPERATIONS_OF_THE_TEST = 100;
 
     public static void main(String[] args) {
+
         ConstraintSatisfactionProblem<String, String> mapCSP = ColoringEuropeMap();
+        /*
         System.out.println("########### Rozwiązanie dla backTrackingSearch ###########");
         PrintColoringMapSolution((mapCSP.backTrackingSearch()));
+        System.out.println(mapCSP.getVisiting());
         System.out.println("\n\n########### Rozwiązanie dla forwardCheckingSearch ###########");
         PrintColoringMapSolution((mapCSP.forwardCheckingSearchLoop()));
+        System.out.println(mapCSP.getVisiting());
+         */
+/*
+        System.out.println("Back Tracking Search");
+        test(mapCSP, "backTrackingSearch");
 
+        System.out.println("Froward Checking Search");
+        test(mapCSP, "forwardCheckingSearch");
+*/
 
         ConstraintSatisfactionProblem<List<String>, String> einsteinCSP = EinsteinProblem();
         System.out.println("\n\n########### Rozwiązanie dla backTrackingSearch ###########");
         PrintEinsteinSolution((einsteinCSP.backTrackingSearch()));
+        System.out.println(einsteinCSP.getVisiting());
         System.out.println("\n\n########### Rozwiązanie dla forwardCheckingSearch ###########");
         PrintEinsteinSolution((einsteinCSP.forwardCheckingSearchLoop()));
+        System.out.println(einsteinCSP.getVisiting());
+
     }
 
     static public ConstraintSatisfactionProblem<String, String> ColoringOpolskieMap(){
@@ -56,11 +71,47 @@ public class main {
     }
 
     static public ConstraintSatisfactionProblem<String, String> ColoringEuropeMap(){
-        List<String> variables = Arrays.asList("Iceland", "United Kingdom", "Ireland", "Norway", "Sweden", "Finland", "Estonia", "Latvia",
-                "Lithuania", "Belarus", "Ukraine", "Moldova", "Poland", "Slovakia", "Czech Republic", "Germany", "Austria", "Hungary",
-                "Romania", "Bulgaria", "Macedonia", "Greece", "Albania", "Serbia", "Bosnia and Herzegovina", "Croatia", "Slovenia",
-                "Montenegro", "Liechenstein", "Monaco", "France", "Andorra", "Spain", "Portugal", "Belgium", "Netherlands", "Luxemburg",
-                "Denmark", "Italy", "Malta", "Switzerland");
+        List<String> variables = Arrays.asList("Iceland",
+                "United Kingdom",
+                "Ireland",
+                "Norway",
+                "Sweden",
+                "Finland",
+                "Estonia",
+                "Latvia",
+                "Lithuania",
+                "Belarus",
+                "Ukraine",
+                "Moldova",
+                "Poland",
+                "Slovakia",
+                "Czech Republic",
+                "Germany",
+                "Austria",
+                "Hungary",
+                "Romania",
+                "Bulgaria",
+                "Macedonia",
+                "Greece",
+                "Albania",
+                "Serbia",
+                "Bosnia and Herzegovina",
+                "Croatia",
+                "Slovenia",
+                "Montenegro",
+                "Liechenstein",
+                "Monaco",
+                "France",
+                "Andorra",
+                "Spain",
+                "Portugal",
+                "Belgium",
+                "Netherlands",
+                "Luxemburg",
+                "Denmark",
+                "Italy",
+                "Malta",
+                "Switzerland");
         Map<String, List<String>> domains = new HashMap<>();
         for(String var: variables){
             domains.put(var, Arrays.asList("blue", "red", "purple", "yellow"));
@@ -281,5 +332,29 @@ public class main {
                 }
             }
         }
+    }
+
+    private static void test(ConstraintSatisfactionProblem<String, String> csp, String type){
+        int totalVisiting = 0;
+        long totalTime = 0;
+        for(int i=0; i<NO_OF_OPERATIONS_OF_THE_TEST; i++){
+            if(type.equals("backTrackingSearch")){
+                long startTime = System.nanoTime();
+                csp.backTrackingSearch();
+                long stopTime = System.nanoTime();
+                totalTime += stopTime - startTime;
+                totalVisiting += csp.getVisiting();
+            } else if(type.equals("forwardCheckingSearch")){
+                long startTime = System.nanoTime();
+                csp.forwardCheckingSearchLoop();
+                long stopTime = System.nanoTime();
+                totalTime += stopTime - startTime;
+                totalVisiting += csp.getVisiting();
+            } else {
+                throw new IllegalArgumentException("Select the correct CSR type [backTrackingSearch, forwardCheckingSearch]");
+            }
+        }
+        System.out.println("Avg time: " + totalTime/NO_OF_OPERATIONS_OF_THE_TEST);
+        System.out.println("Avg visiting: " + totalVisiting/NO_OF_OPERATIONS_OF_THE_TEST);
     }
 }
