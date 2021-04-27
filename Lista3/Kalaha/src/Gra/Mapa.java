@@ -160,8 +160,31 @@ public class Mapa {
         return pole;
     }
 
+    public Pole getPole(int numerPola, int jakiGracz){
+        if (jakiGracz == 1) {
+            return this.pole[numerPola - 1];
+        } else {
+            int liczba = numerPola + this.getRozmiarMapy()/2 - 1;
+            Pole pole = this.pole[liczba];
+            return pole;
+        }
+    }
+
     public void setPole(Pole[] pole) {
         this.pole = pole;
+    }
+
+    public int getRozmiarMapy(){
+        return pole.length;
+    }
+
+    public int getRoznicaKamykowDlaGracza(int gracz){
+        int ilosc = this.pole[getRozmiarMapy()/2 - 1].getIloscKamykow() - this.pole[getRozmiarMapy() - 1].getIloscKamykow();
+        if (gracz == 1){
+            return ilosc;
+        } else {
+            return -ilosc;
+        }
     }
 
     @Override

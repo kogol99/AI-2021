@@ -3,6 +3,7 @@ package Serwer;
 import DecTree.SmallerTreeThread;
 import DecTree.*;
 import Gra.Kalaha;
+import MinMax.MinMax;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +40,12 @@ public class Serwer {
 
         int pole = tree.znajdowanieNajlepszegoRuchuWDrzewie();
         return pole;
+    }
+
+    public int znajdzNajlepszyRuchMinMax(int player) {
+        MinMax minMax;
+        minMax = new MinMax();
+        return minMax.findBest(this.kalaha, player);
     }
 
     public boolean wykonajRuchGracz(int zPola, int jakiGracz) {

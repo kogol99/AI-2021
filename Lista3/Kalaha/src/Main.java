@@ -7,8 +7,8 @@ public class Main {
     static boolean komputer(Serwer serwer, boolean czyZakonczono, int jakiGracz) {
         boolean czyWykonanyRuch = false;
         while (!czyWykonanyRuch && !czyZakonczono) {
-            System.out.println("\nKomputer: ");
-            int pole = serwer.znajdzNajlepszyRuch();
+            System.out.println("\nKomputer " + jakiGracz + ": ");
+            int pole = serwer.znajdzNajlepszyRuchMinMax(jakiGracz);
             System.out.println("Wykonuję ruch z pola: " + pole);
             czyWykonanyRuch = serwer.wykonajRuchGracz(pole, jakiGracz);
             czyZakonczono = serwer.sprawdzCzyKoniec();

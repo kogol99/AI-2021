@@ -1,17 +1,24 @@
 package Gra;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Kalaha {
     private Mapa mapa;
     private int aktualnyGracz;
     private int czyKolejnyGracz;
+    private int wybranyIndex;
 
     public Kalaha() {
         this.mapa = new Mapa();
         aktualnyGracz = 2;
         czyKolejnyGracz = 1;
+        wybranyIndex = -1;
     }
 
     boolean przesunKamyki(int index) {
         this.czyKolejnyGracz = 1;
+        this.wybranyIndex = index;
         int zasada = mapa.sprawdzZasady(index, this.aktualnyGracz);
         int ostatniIndex = mapa.przesunKamyki(index, this.aktualnyGracz);
 
@@ -110,6 +117,44 @@ public class Kalaha {
         this.czyKolejnyGracz = czyKolejnyGracz;
     }
 
+    public void setWybranyIndex(int wybranyIndex) {
+        this.wybranyIndex = wybranyIndex;
+    }
+
+    public int getAktualnyGracz(){
+        return this.aktualnyGracz;
+    }
+
+    public boolean czyPierwszyRuch(){ return this.wybranyIndex == -1;}
+
+    public int getWybranyIndex(){ return this.wybranyIndex; }
+
+    public List<Kalaha> getDzieciGracza(int jakiGracz){
+        List<Kalaha> dzieci = new ArrayList<>();
+        for( int i = 1; i < this.mapa.getRozmiarMapy()/2; i++) {
+            dodajDzieckoPoRuchuZPola(i, dzieci, jakiGracz);
+        }
+        return dzieci;
+    }
+
+    public void dodajDzieckoPoRuchuZPola(int idPola, List<Kalaha> dzieci, int jakiGracz){
+        if (!(this.mapa.getPole(idPola, jakiGracz).getIloscKamykow() == 0)){
+            Kalaha dziecko = null;
+            try {
+                dziecko = (Kalaha) this.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            assert dziecko != null;
+            dziecko.wykonajRuchGracz(idPola, jakiGracz);
+            dzieci.add(dziecko);
+        }
+    }
+
+    public int getPrzewagaGracza(int gracz){
+        return this.mapa.getRoznicaKamykowDlaGracza(gracz);
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         Kalaha kalaha = null;
@@ -122,6 +167,7 @@ public class Kalaha {
         kalaha.setMapa(mapa);
         kalaha.setAktualnyGracz(this.aktualnyGracz);
         kalaha.setCzyKolejnyGracz(this.czyKolejnyGracz);
+        kalaha.setWybranyIndex(this.wybranyIndex);
 
         return kalaha;
     }
